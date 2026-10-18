@@ -2,7 +2,7 @@ from random import choice
 from flask import session
 from app.database.mongodb_connect import db
 
-__all__ = ["random_wheel"]
+__all__ = ["RandomWheel"]
 
 
 class RandomWheel:
@@ -25,7 +25,7 @@ class RandomWheel:
         return int(choice(gift_data).get("id", 1))
 
     @staticmethod
-    def random_name(self) -> int:
+    def random_name() -> int:
         current_count = session.get("name_count", 0) + 1
         session["name_count"] = current_count
 
@@ -37,6 +37,3 @@ class RandomWheel:
         )
 
         return int(choice(users_data).get("id", 1))
-
-
-random_wheel = RandomWheel()
