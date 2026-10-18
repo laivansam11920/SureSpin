@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vòng Quay Fetch API</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="instruction">Chạm vào vòng quay để bắt đầu</div>
+
+    <div class="wheel-container" id="wheelTrigger">
+        <canvas id="wheelCanvas" width="1000" height="1000"></canvas>
+        <div id="pointer" class="pointer"></div>
+    </div>
+
+    <button class="reset-btn" onclick="resetData()">LÀM MỚI VÒNG QUAY</button>
+
+    <div class="modal-overlay" id="resultModal">
+        <div class="modal-box">
+            <h2>Kết quả quay</h2>
+            <div class="winner-name" id="winnerText">Tên người trúng</div>
+            <div class="btn-group">
+                <button class="btn btn-keep" onclick="handleKeep()">Giữ lại</button>
+                <button class="btn btn-delete" onclick="handleDelete()">Xóa luôn</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
