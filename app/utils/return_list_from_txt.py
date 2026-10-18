@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 def return_list() -> tuple[list, list]:
     BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent
 
