@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify
 
 gift_bp: Blueprint = Blueprint("gift", __name__)
 
+
 @gift_bp.post("/delete_gift")
 def delete_gift():
     from app.database.mongodb_connect import db
@@ -22,7 +23,6 @@ def delete_gift():
     )
 
 
-
 @gift_bp.get("/get_gifts")
 def get_gifts():
     from app.database.mongodb_connect import db
@@ -30,6 +30,7 @@ def get_gifts():
     data = list(db.wheel_gift.find({"use": False}, {"_id": 0}))
 
     return jsonify({"users": data})
+
 
 @gift_bp.post("/reset_gifts")
 def reset_gifts():

@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify
 
 user_bp: Blueprint = Blueprint("user", __name__)
 
+
 @user_bp.post("/delete_user")
 def delete_user():
     from app.database.mongodb_connect import db
@@ -20,6 +21,7 @@ def delete_user():
             "message": "Đã xóa thành công",
         }
     )
+
 
 @user_bp.get("/get_users")
 def get_users():

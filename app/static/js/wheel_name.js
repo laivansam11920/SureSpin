@@ -164,7 +164,15 @@
             try {
                 const response = await fetch(`/random-users?total=${numSegments}`);
                 const data = await response.json();
-                const targetIndex = data.winnerIndex;
+                const targetId = data.winnerId;
+
+                const targetIndex = segments.findIndex(user => user.id === targetId);
+
+                if (targetIndex === -1) {
+                    console.error("Lỗi: Backend trả về ID không tồn tại trên vòng quay!");
+                    isSpinning = false;
+                    return;
+                }
 
                 const targetAngle = targetIndex * anglePerSegment + (anglePerSegment / 2);
                 const randomOffset = (Math.random() - 0.5) * (anglePerSegment * 0.7);
