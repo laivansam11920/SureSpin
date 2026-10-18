@@ -26,7 +26,7 @@
         async function resetData() {
             if (isSpinning) return;
             try {
-                const response = await fetch('/reset_user', { method: 'POST' });
+                const response = await fetch('/reset_users', { method: 'POST' });
                 const data = await response.json();
                 segments = data.users;
                 currentRotation = 0;
@@ -142,7 +142,7 @@
             const deletedUser = segments[lastWinnerIndex];
 
             try {
-                await fetch('/user_del', {
+                await fetch('/delete_user', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: deletedUser.id })
