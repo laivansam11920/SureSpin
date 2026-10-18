@@ -20,7 +20,7 @@ class RandomWheel:
 
         gift_data = list(
             db.wheel_gift.find(
-                {"use": False},
+                {"use": False, "special": False},
                 {"_id": 0, "id": 1},
             )
         )
