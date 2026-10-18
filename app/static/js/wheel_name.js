@@ -12,6 +12,15 @@
         let isSpinning = false;
         let lastWinnerIndex = -1;
 
+        function triggerFireworks() {
+            confetti({
+                particleCount: 150,
+                spread: 1000,
+                origin: { y: 0.6 },
+                zIndex: 9999
+            });
+        }
+
         async function loadData() {
             try {
                 const response = await fetch('/get_users');
@@ -130,6 +139,7 @@
         function showResult(index) {
             lastWinnerIndex = index;
             winnerText.innerText = segments[index].text;
+            triggerFireworks();
             modal.classList.add("show");
         }
 
