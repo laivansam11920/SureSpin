@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vòng Quay Fetch API</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/laivansam11920/SureSpin@main/app/static/css/styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <div class="instruction">Quà cho các bông hoa lớp 10a2 đây nè</div>
@@ -13,6 +13,8 @@
         <canvas id="wheelCanvas" width="1000" height="1000"></canvas>
         <div id="pointer" class="pointer"></div>
     </div>
+
+    <canvas id="myConfettiCanvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; background: transparent;"></canvas>
 
     <button class="reset-btn" onclick="resetData()">LÀM MỚI VÒNG QUAY</button>
 

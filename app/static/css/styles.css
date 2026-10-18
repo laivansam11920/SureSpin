@@ -26,6 +26,14 @@
             transition: transform 0.1s;
         }
 
+        canvas:not(#wheelCanvas) {
+            background: transparent !important;
+            background-color: transparent !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            border: none !important;
+        }
+
         .wheel-container:active canvas { transform: scale(0.98); }
 
         .pointer {

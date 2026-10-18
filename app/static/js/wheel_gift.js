@@ -13,11 +13,16 @@
         let lastWinnerIndex = -1;
 
         function triggerFireworks() {
-            confetti({
+    const canvas = document.getElementById('myConfettiCanvas');
+    const myConfetti = confetti.create(canvas, {
+                resize: true,
+                useWorker: true
+            });
+
+            myConfetti({
                 particleCount: 150,
-                spread: 1000,
-                origin: { y: 0.6 },
-                zIndex: 9999
+                spread: 80,
+                origin: { y: 0.6 }
             });
         }
 
