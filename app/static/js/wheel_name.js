@@ -162,7 +162,7 @@
             isSpinning = true;
 
             try {
-                const response = await fetch(`/random?total=${numSegments}`);
+                const response = await fetch(`/random-users?total=${numSegments}`);
                 const data = await response.json();
                 const targetIndex = data.winnerIndex;
 

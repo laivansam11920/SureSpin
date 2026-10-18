@@ -8,6 +8,7 @@ def register_blueprints(app: Flask):
         main_bp,
         random_bp,
         user_bp,
+        gift_bp,
     ]
 
     for bp in list_bp:
