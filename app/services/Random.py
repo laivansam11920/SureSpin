@@ -7,7 +7,8 @@ __all__ = ["random_wheel"]
 
 class RandomWheel:
 
-    def random_gift(self) -> int:
+    @staticmethod
+    def random_gift() -> int:
         if session.get("name_count", 0) in (2, 7, 10):
             gift = db.wheel_gift.find_one(
                 {"special": True, "use": False},
@@ -23,6 +24,7 @@ class RandomWheel:
         )
         return int(choice(gift_data).get("id", 1))
 
+    @staticmethod
     def random_name(self) -> int:
         current_count = session.get("name_count", 0) + 1
         session["name_count"] = current_count
