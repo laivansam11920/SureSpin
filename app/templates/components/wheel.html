@@ -1,0 +1,30 @@
+{% macro lucky_wheel(items, endpoint="/api/spin", wheel_id="mainWheel") %}
+{% set total = items|length %}
+{% set step = 360 / total %}
+
+{% set gradient_list = [] %}
+{% for item in items %}
+    {% set start = loop.index0 * step %}
+    {% set end = (loop.index0 + 1) * step %}
+    {% set _ = gradient_list.append(item.color ~ ' ' ~ start ~ 'deg ' ~ end ~ 'deg') %}
+{% endfor %}
+
+<div class="wheel-wrapper" id="{{ wheel_id }}">
+    <!-- Kim chỉ -->
+    <div class="wheel-pointer"></div>
+
+    <!-- Bánh xe -->
+    <div class="wheel-board" style="background: conic-gradient({{ gradient_list|join(', ') }});">
+        {% for item in items %}
+            <div class="wheel-label" style="transform: rotate({{ (loop.index0 + 0.5) * step }}deg) translateY(-130px);">
+                <span>{{ item.label }}</span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Nút quay -->
+    <button class="spin-btn" onclick="startSpin('{{ wheel_id }}', '{{ endpoint }}', {{ total }})">
+        QUAY
+    </button>
+</div>
+{% endmacro %}

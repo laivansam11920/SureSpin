@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheel of Names | Công cụ chọn tên ngẫu nhiên</title>
+
+    <!-- Thư viện pháo hoa Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body {
+            background-color: #121318;
+            color: #e1e1e6;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- TOP HEADER --- */
+        header {
+            background-color: #1a1b23;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            border-bottom: 1px solid #2a2b36;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .logo-icon {
+            width: 26px;
+            height: 26px;
+            background: linear-gradient(135deg, #a55eea, #54a0ff, #84e1bc);
+            border-radius: 6px;
+        }
+
+        .nav-tools {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+            color: #b3b3c2;
+        }
+
+        .nav-item {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .nav-item:hover { background-color: #2a2b36; color: #fff; }
+
+        /* --- MAIN LAYOUT --- */
+        main {
+            flex: 1;
+            display: flex;
+            height: calc(100vh - 48px);
+        }
+
+        /* --- BÊN TRÁI: VÒNG QUAY --- */
+        .wheel-container {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #181920;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            width: min(75vh, 550px);
+            height: min(75vh, 550px);
+        }
+
+        svg.wheel-svg {
+            width: 100%;
+            height: 100%;
+            transform-origin: center;
+            transition: transform 5s cubic-bezier(0.1, 0.99, 0.15, 1);
+        }
+
+        /* Tâm vòng quay */
+        .wheel-center-hub {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 15%;
+            height: 15%;
+            background-color: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* Kim chỉ ở góc 3 giờ (Bên phải) */
+        .wheel-pointer {
+            position: absolute;
+            right: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 18px solid transparent;
+            border-bottom: 18px solid transparent;
+            border-right: 36px solid #f6d365;
+            z-index: 10;
+            filter: drop-shadow(-2px 2px 4px rgba(0,0,0,0.5));
+            pointer-events: none;
+        }
+
+        /* Dòng chữ đè đúp lên vòng quay */
+        .click-to-spin-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 22% 0;
+            z-index: 6;
+            pointer-events: none;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 28px;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9), -2px -2px 6px rgba(0, 0, 0, 0.9);
+            user-select: none;
+        }
+
+        .sub-text { font-size: 20px; font-weight: 700; }
+
+        /* --- BÊN PHẢI: BẢNG NỘI DUNG & TÙY CHỈNH --- */
+        .sidebar {
+            width: 320px;
+            background-color: #1e1f29;
+            border-left: 1px solid #2a2b36;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-tabs {
+            display: flex;
+            background-color: #161720;
+            border-bottom: 1px solid #2a2b36;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            color: #8b8c9e;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .tab-btn.active {
+            color: #fff;
+            border-bottom: 2px solid #54a0ff;
+            background-color: #1e1f29;
+        }
+
+        .tab-badge {
+            background-color: #2d2f3e;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+
+        .sidebar-actions {
+            padding: 10px;
+            display: flex;
+            gap: 6px;
+            border-bottom: 1px solid #2a2b36;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background-color: #2a2c3d;
+            color: #d1d2e0;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .action-btn:hover { background-color: #383a50; color: #fff; }
+
+        .items-textarea {
+            flex: 1;
+            background-color: #14151c;
+            border: none;
+            color: #fff;
+            padding: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+        }
+
+        .sidebar-footer {
+            padding: 10px;
+            background-color: #161720;
+            border-top: 1px solid #2a2b36;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #6c6d7c;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER TOP BAR -->
+    <header>
+        <div class="logo-area">
+            <div class="logo-icon"></div>
+            <span>Wheel of Names</span>
+        </div>
+        <div class="nav-tools">
+            <div class="nav-item"><i class="fa-solid fa-sliders"></i> Tùy chỉnh</div>
+            <div class="nav-item"><i class="fa-solid fa-file"></i> Mới</div>
+            <div class="nav-item"><i class="fa-solid fa-folder-open"></i> Mở</div>
+            <div class="nav-item"><i class="fa-solid fa-floppy-disk"></i> Lưu</div>
+            <div class="nav-item"><i class="fa-solid fa-share-nodes"></i> Chia sẻ</div>
+            <div class="nav-item"><i class="fa-solid fa-globe"></i> Tiếng Việt</div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main>
+        <!-- BÊN TRÁI: VÒNG QUAY -->
+        <div class="wheel-container" onclick="triggerSpin()">
+            <div class="wheel-wrapper">
+                <!-- Kim Bằng Vàng Ở Bên Phải -->
+                <div class="wheel-pointer"></div>
+
+                <!-- Tâm Bánh Xe Trắng -->
+                <div class="wheel-center-hub"></div>
+
+                <!-- Bánh xe SVG -->
+                <svg id="wheelSvg" class="wheel-svg" viewBox="-200 -200 400 400"></svg>
+
+                <!-- Chữ Đè Lên Vòng Quay -->
+                <div class="click-to-spin-overlay">
+                    <div>Nhấp để quay</div>
+                    <div class="sub-text">hoặc nhấn Ctrl+Enter</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BÊN PHẢI: BẢNG NHẬP DANH SÁCH -->
+        <div class="sidebar">
+            <div class="sidebar-tabs">
+                <button class="tab-btn active"><i class="fa-solid fa-chevron-right"></i> Mục <span id="itemCount" class="tab-badge">0</span></button>
+                <button class="tab-btn">Kết quả <span class="tab-badge">0</span></button>
+            </div>
+
+            <div class="sidebar-actions">
+                <button class="action-btn" onclick="shuffleItems()"><i class="fa-solid fa-shuffle"></i> Xáo trộn</button>
+                <button class="action-btn" onclick="sortItems()"><i class="fa-solid fa-arrow-down-a-z"></i> Sắp xếp</button>
+                <button class="action-btn"><i class="fa-solid fa-image"></i> Thêm ảnh</button>
+            </div>
+
+            <!-- Nơi người dùng sửa danh sách -->
+            <textarea id="itemsInput" class="items-textarea" oninput="renderWheel()"></textarea>
+
+            <div class="sidebar-footer">
+                <span>Phiên bản 437</span>
+                <span style="color: #54a0ff; cursor: pointer;">Changelog</span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Lấy danh sách màu từ Jinja2
+        const colors = {{ colors | tojson }};
+        let currentRotation = 0;
+        let isSpinning = false;
+
+        // Khởi tạo nội dung mặc định từ Jinja2
+        const defaultItems = {{ items | tojson }};
+        document.getElementById('itemsInput').value = defaultItems.join('\n');
+
+        // Hàm lấy danh sách tên hiện tại từ textarea
+        function getItems() {
+            return document.getElementById('itemsInput').value
+                .split('\n')
+                .map(s => s.trim())
+                .filter(s => s.length > 0);
+        }
+
+        // --- VẼ VÒNG QUAY SVG (Chuẩn phong cách Wheel of Names) ---
+        function renderWheel() {
+            const items = getItems();
+            const svg = document.getElementById('wheelSvg');
+            document.getElementById('itemCount').innerText = items.length;
+
+            svg.innerHTML = '';
+            if (items.length === 0) return;
+
+            const total = items.length;
+            const sliceAngle = 360 / total;
+
+            items.forEach((item, index) => {
+                const startAngle = index * sliceAngle;
+                const endAngle = (index + 1) * sliceAngle;
+                const color = colors[index % colors.length];
+
+                // Tính tọa độ Arc SVG
+                const radStart = (Math.PI / 180) * startAngle;
+                const radEnd = (Math.PI / 180) * endAngle;
+
+                const x1 = 180 * Math.cos(radStart);
+                const y1 = 180 * Math.sin(radStart);
+                const x2 = 180 * Math.cos(radEnd);
+                const y2 = 180 * Math.sin(radEnd);
+
+                const largeArc = sliceAngle > 180 ? 1 : 0;
+
+                // Vẽ ô hình quạt
+                const pathData = `M 0 0 L ${x1} ${y1} A 180 180 0 ${largeArc} 1 ${x2} ${y2} Z`;
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', pathData);
+                path.setAttribute('fill', color);
+                svg.appendChild(path);
+
+                // Vẽ chữ dọc theo bán kính hướng ra ngoài
+                const textAngle = startAngle + sliceAngle / 2;
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+
+                text.setAttribute('x', '60');
+                text.setAttribute('y', '5');
+                text.setAttribute('fill', '#000000');
+                text.setAttribute('font-size', total > 20 ? '12' : '18');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('text-anchor', 'start');
+                text.setAttribute('transform', `rotate(${textAngle})`);
+                text.textContent = item;
+
+                svg.appendChild(text);
+            });
+        }
+
+        // --- HÀM BẤM QUAY (GỬI DỮ LIỆU ĐỂ SERVER CƠ CẤU) ---
+        function triggerSpin() {
+            if (isSpinning) return;
+            const items = getItems();
+            if (items.length === 0) return;
+
+            isSpinning = true;
+
+            // Gửi danh sách tên lên Flask server nhận chỉ định "cơ cấu"
+            fetch('/api/spin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items: items })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === "success") {
+                    animateSpin(data.winning_index, data.winning_item, items.length);
+                }
+            })
+            .catch(() => {
+                alert('Lỗi kết nối Server!');
+                isSpinning = false;
+            });
+        }
+
+        // --- ANIMATION QUAY BÁNH XE ---
+        function animateSpin(winIndex, winLabel, totalItems) {
+            const svg = document.getElementById('wheelSvg');
+            const sliceAngle = 360 / totalItems;
+
+            // Vì kim chỉ ở BÊN PHẢI (góc 0 độ), ô trúng thưởng phải dừng tại góc 0 deg
+            const centerAngleOfWinner = (winIndex + 0.5) * sliceAngle;
+            const targetDegree = 360 - centerAngleOfWinner;
+
+            // Xoay ít nhất 5 vòng (1800 deg)
+            const extraRounds = 360 * 5;
+            const nextRotation = Math.ceil(currentRotation / 360) * 360 + extraRounds + targetDegree;
+
+            currentRotation = nextRotation;
+            svg.style.transform = `rotate(${nextRotation}deg)`;
+
+            // Sau 5 giây khi bánh xe dừng lại
+            setTimeout(() => {
+                fireworks();
+                alert(`🎉 Món quà trúng thưởng: ${winLabel}`);
+                isSpinning = false;
+            }, 5000);
+        }
+
+        // Bắn Pháo Hoa
+        function fireworks() {
+            confetti({
+                particleCount: 120,
+                spread: 80,
+                origin: { y: 0.6 }
+            });
+        }
+
+        // Các thao tác danh sách
+        function shuffleItems() {
+            const items = getItems().sort(() => Math.random() - 0.5);
+            document.getElementById('itemsInput').value = items.join('\n');
+            renderWheel();
+        }
+
+        function sortItems() {
+            const items = getItems().sort((a, b) => a.localeCompare(b));
+            document.getElementById('itemsInput').value = items.join('\n');
+            renderWheel();
+        }
+
+        // Bắt sự kiện phím tắt Ctrl + Enter
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                triggerSpin();
+            }
+        });
+
+        // Vẽ bánh xe lần đầu
+        renderWheel();
+    </script>
+</body>
+</html>
