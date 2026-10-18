@@ -16,7 +16,7 @@ class RandomWheel:
                 {"special": True, "use": False},
                 {"_id": 0, "id": 1},
             )
-            return gift.get("id", 15)
+            return gift.get("id", 1)
 
         gift_data = list(
             db.wheel_gift.find(
