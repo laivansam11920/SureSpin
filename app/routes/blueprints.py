@@ -9,6 +9,7 @@ def register_blueprints(app: Flask):
         random_bp,
         user_bp,
         gift_bp,
+        ping,
     ]
 
     for bp in list_bp:
