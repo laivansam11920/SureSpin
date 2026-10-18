@@ -1,6 +1,8 @@
 from random import choice
 from flask import session
+
 from app.database.mongodb_connect import db
+from configs import Config
 
 __all__ = ["RandomWheel"]
 
@@ -9,7 +11,7 @@ class RandomWheel:
 
     @staticmethod
     def random_gift() -> int:
-        if session.get("name_count", 0) in (2, 7, 10):
+        if session.get("name_count", 0) in Config.LIST_ID_SPECIAL:
             gift = db.wheel_gift.find_one(
                 {"special": True, "use": False},
                 {"_id": 0, "id": 1},
@@ -22,6 +24,7 @@ class RandomWheel:
                 {"_id": 0, "id": 1},
             )
         )
+
         return int(choice(gift_data).get("id", 1))
 
     @staticmethod
