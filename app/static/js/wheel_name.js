@@ -145,6 +145,10 @@
         function showResult(index) {
             lastWinnerIndex = index;
             winnerText.innerText = segments[index].text;
+            winSound.currentTime = 0;
+            winSound.play().catch(error => {
+                console.log("Trình duyệt chặn tự động phát âm thanh:", error);
+            });
             triggerFireworks();
             modal.classList.add("show");
         }
