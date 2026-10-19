@@ -4,6 +4,7 @@
         const wheelTrigger = document.getElementById("wheelTrigger");
         const modal = document.getElementById("resultModal");
         const winnerText = document.getElementById("winnerText");
+        const winSound = new Audio('/static/audio/chuc_mung.mp3');
 
         let segments = [];
         let numSegments = 0;
